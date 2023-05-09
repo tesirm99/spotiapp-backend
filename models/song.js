@@ -1,5 +1,6 @@
 const mongoose = require('../db/mongo');
 const { Schema } = mongoose;
+const { cmtSchema } = require('./comment').cmtSchema;
 
 const SongSchema = new Schema({
     name: { type: String, required: true },
@@ -11,14 +12,7 @@ const SongSchema = new Schema({
     images: { type: [String], required: true },
     href: { type: String, required: true },
     popularity: { type: Number, required: true },
-    comments: [
-        {
-            author: { type: String, required: true },
-            comment: { type: String, required: true },
-            date: { type: Date, default: Date.now },
-            stars: { type: Number, required: true }
-        }
-    ]
+    comments: { type: Map, of: cmtSchema, required: true },
 });
 
 module.exports = mongoose.model('Song', SongSchema);
