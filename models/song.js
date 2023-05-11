@@ -12,6 +12,7 @@ const SongSchema = new Schema({
     images: { type: [String], required: true },
     href: { type: String, required: true },
     popularity: { type: Number, required: true },
+    geolocation: { type: [Number], required: false },
     comments: { type: Map, of: cmtSchema, required: true },
 });
 

@@ -1,30 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const songController = require('../controllers/songs');
+const ensureAuthenticated = require('./middleware').ensureAuthenticated;
 
-router.get('/fetchSongsFromSpotify', songController.fetchSongsFromSpotify);
+router.get('/fetchSongsFromSpotify/:searchQ', ensureAuthenticated, songController.fetchSongsFromSpotify);
 
 router.get('/', songController.getAllSongs);
 
-router.get('/songs/:id', songController.getSongById);
+router.get('/:id', songController.getSongById);
 
-router.get('/songs/searchByName/:name', songController.searchSongByName);
+router.get('/searchByName/:name', songController.searchSongByName);
 
-router.get('/songs/searchByArtist/:artist', songController.searchSongByArtist);
+router.get('/searchByArtist/:artist', songController.searchSongByArtist);
 
-router.get('/songs/searchByAlbum/:album', songController.searchSongByAlbum);
+router.get('/searchByAlbum/:album', songController.searchSongByAlbum);
 
-router.get('/songs/searchByDate/:date', songController.searchSongByDate);
+router.get('/searchByDate/:date', songController.searchSongByDate);
 
-router.post('/songs/newsong', songController.postSong);
+router.post('/newsong', ensureAuthenticated, songController.postSong);
 
-router.get('/songs/:id/comments', songController.getCommentsBySongId);
+router.get('/:id/comments', songController.getCommentsBySongId);
 
-router.post('/songs/:id/comments', songController.postCommentToSong);
+router.post('/:id/comments', ensureAuthenticated, songController.postCommentToSong);
 
-router.put('/songs/:id', songController.updateSong);
+router.put('/:id', ensureAuthenticated, songController.updateSong);
 
-router.delete('/songs/:id', songController.deleteSong);
+router.delete('/:id', ensureAuthenticated, songController.deleteSong);
 
 
 
