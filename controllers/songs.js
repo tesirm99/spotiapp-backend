@@ -82,5 +82,19 @@ module.exports.fetchSongsFromSpotify = async function(req, res) {
     let tokenJson = await token.json();
 
     
-    console.log(await token.json());
+    console.log(tokenJson);
+
+    let songs = await fetch('https://api.spotify.com/v1/search?q=' + req.params.searchQ + '&type=track&limit=10&offset=5', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + tokenJson.access_token,
+            'Content-Type': 'application/json',
+        },
+    })
+
+    let songsJson = await songs.json();
+
+    console.log(songsJson);
+
+    res.json(songsJson);
 }
