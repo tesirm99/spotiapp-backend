@@ -3,5 +3,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 exports.createToken = function(user) {
-    return jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1h'});
+    var payload = {
+        sub: user,
+        iat: Date.now(),
+        exp: Date.now() + 1000 * 60 * 60
+    };
+    return jwt.sign(payload, process.env.JWT_SECRET);
 }
