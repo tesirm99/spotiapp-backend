@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const songController = require('../controllers/songs');
-const ensureAuthenticated = require('./middleware').ensureAuthenticated;
+const ensureAuthenticated = require('../middleware/auth').ensureAuthenticated;
 
 router.get('/fetchSongsFromSpotify/:searchQ', ensureAuthenticated, songController.fetchSongsFromSpotify);
 
@@ -26,8 +26,5 @@ router.post('/:id/comments', ensureAuthenticated, songController.postCommentToSo
 router.put('/:id', ensureAuthenticated, songController.updateSong);
 
 router.delete('/:id', ensureAuthenticated, songController.deleteSong);
-
-
-
 
 module.exports = router;
