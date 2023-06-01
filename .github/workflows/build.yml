@@ -9,20 +9,18 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
+      - uses: actions/checkout@v3
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v4
+          credentials_json: '${{ secrets.GCR_DEVOPS_SERVICE_ACCOUNT_KEY }}'
+      - name: Building and pushing the image
+        uses: RafikFarhad/push-to-gcr-github-action@v5-beta
         with:
-          push: true
-          tags: tesirm/spotiapp-backend:latest
+          registry: gcr.io
+          project_id: ${{ secrets.PROJECT_ID }}
+          image_name: spotiapp-front
+          image_tag: latest, ${{ github.sha }}
+          dockerfile: ./Dockerfile
+          context: ./ 
