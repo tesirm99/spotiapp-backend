@@ -6,7 +6,7 @@ exports.createToken = function(user) {
     var payload = {
         sub: user,
         iat: Date.now(),
-        exp: Date.now() + 1000 * 60 * 60
+        exp: Date.now() + 1000 * 60 * 60 * 24
     };
     return jwt.sign(payload, process.env.JWT_SECRET);
 }
