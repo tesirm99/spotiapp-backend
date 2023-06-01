@@ -6,7 +6,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker:
+  build:
+    runs-on: ubuntu-latest
+    container: node:20-alpine
+    env:
+      SPOTIFY_TOKEN: ${{ secrets.SPOTIFY_TOKEN }}
+      DB_URI: ${{ secrets.DB_URI }}
+      SPOTIFY_ID: ${{ secrets.SPOTIFY_ID }}
+      SPOTIFY_SECRET: ${{ secrets.SPOTIFY_SECRET }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install .
+  push-to-gcr:
+    name: Build & Push to GCR
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,7 +35,7 @@ jobs:
         with:
           registry: gcr.io
           project_id: ${{ secrets.PROJECT_ID }}
-          image_name: spotiapp-front
+          image_name: spotiapp-backend
           image_tag: latest, ${{ github.sha }}
           dockerfile: ./Dockerfile
           context: ./ 
