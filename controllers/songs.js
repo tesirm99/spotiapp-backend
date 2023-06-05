@@ -149,7 +149,7 @@ module.exports.postSong = async function(req, res) {
         res.status(400).send({ message: 'La duración no puede ser nula ni indefinida.' });
     }
 
-    if(req.body.images == null || req.body.images == undefined) {
+    if(req.body.image == null || req.body.image == undefined) {
         res.status(400).send({ message: 'Las imágenes no pueden ser nulas ni indefinidas.' });
     }
 
@@ -166,20 +166,23 @@ module.exports.postSong = async function(req, res) {
         artist: req.body.artist,
         album: req.body.album,
         releaseDate: req.body.releaseDate,
-        genres: req.body.genres,
+        genre: req.body.genre,
         duration: req.body.duration,
-        images: req.body.images,
+        image: req.body.image,
         href: req.body.href,
         popularity: req.body.popularity,
-        geolocation: req.body.geolocation,
-        comments: req.body.comments || []
+        geolocation: req.body.geolocation || [],
+        comments: []
     });
+
+    console.log("song: ", song);
 
     song.save()
     .then((song) => {
         res.status(201).json(song);
     })
     .catch((err) => {
+        console.log(err);
         res.status(400).send({ message: `Error: la canción no se ha creado.\n ${err}` });
     });
     
@@ -215,11 +218,11 @@ module.exports.postCommentToSong = async function(req, res) {
         res.status(400).send({ message: 'El id no puede ser nulo ni indefinido.' });
     }
 
-    if(req.body.username == null || req.body.username == undefined) {
+    if(req.body.author == null || req.body.author == undefined) {
         res.status(400).send({ message: 'El nombre de usuario no puede ser nulo ni indefinido.' });
     }
 
-    if(req.body.comment == null || req.body.comment == undefined) {
+    if(req.body.commentText == null || req.body.commentText == undefined) {
         res.status(400).send({ message: 'El comentario no puede ser nulo ni indefinido.' });
     }
 
@@ -227,16 +230,21 @@ module.exports.postCommentToSong = async function(req, res) {
         res.status(400).send({ message: 'La valoración no puede ser nula ni indefinida.' });
     }
 
-    SongModel.findById(req.params.id)
+    console.log('id:   ', req.params.id);
+
+    SongModel.findOne({"_id": req.params.id})
     .then((song) => {
         if(song == null || song == undefined) {
             res.status(404).send({ message: 'La canción no existe.' });
         }
+        console.log("found song: ", song);
 
+        console.log("req.body: ", req.body);
         song.comments.push({
-            author: req.body.username,
-            comment: req.body.comment,
-            stars: req.body.stars
+            author: req.body.author,
+            commentText: req.body.commentText,
+            stars: req.body.stars,
+            date: req.body.date
         });
 
         song.save()
@@ -290,5 +298,5 @@ module.exports.fetchSongsFromSpotify = async function(req, res) {
 
     console.log(songsJson);
 
-    res.json(songsJson);
+    res.status(200).json(songsJson);
 }

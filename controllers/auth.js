@@ -47,3 +47,11 @@ module.exports.signin = function(req, res) {
         return res.status(400).send({ message: 'Faltan datos' });
     }
 }
+
+module.exports.getUser = function(req, res) {
+    User.findById(req.params.id).then(function(user) {
+        res.status(200).send(user.username);
+    }).catch(function(err) {
+        res.status(400).send({ message: `Error: el usuario no existe.\n ${err}` });
+    });
+}
