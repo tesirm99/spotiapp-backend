@@ -8,17 +8,17 @@ var User = mongoose.model('User', UserSchema);
 module.exports.signup = function(req, res) {
     console.log("BUENAS TARDES", req.body);
 
-    User.find({ username: req.body.username }).then(function(users) {
+    User.find({ email: req.body.email }).then(function(users) {
         if (users.length >= 1) {
             return res.status(409).send({ message: 'El usuario ya existe' });
         } else {
             var newUser = new User({
-                username: req.body.username,
+                email: req.body.email,
                 password: bcrypt.hashSync(req.body.password)
             });
         
             newUser.save().then(function() {
-                res.status(200).send({ token: service.createToken(newUser.username) });
+                res.status(200).send({ token: service.createToken(newUser.email) });
             }).catch(function(err) {
                 res.status(400).send({ message: `Error: el usuario no se ha creado.\n ${err}` });
             })
@@ -30,9 +30,9 @@ module.exports.signup = function(req, res) {
 
 module.exports.signin = function(req, res) {
 
-    if(req.body.username && req.body.password) {
+    if(req.body.email && req.body.password) {
         
-        User.findOne({ username: req.body.username }).then(function(user) {
+        User.findOne({ email: req.body.email }).then(function(user) {
             
             if (bcrypt.compareSync(req.body.password, user.password)) {
                 res.status(200).send({ token: service.createToken(user), id: user._id });
@@ -50,7 +50,7 @@ module.exports.signin = function(req, res) {
 
 module.exports.getUser = function(req, res) {
     User.findById(req.params.id).then(function(user) {
-        res.status(200).send(user.username);
+        res.status(200).send(user.email);
     }).catch(function(err) {
         res.status(400).send({ message: `Error: el usuario no existe.\n ${err}` });
     });

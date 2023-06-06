@@ -23,6 +23,8 @@ router.get('/:id/comments', songController.getCommentsBySongId);
 
 router.post('/:id/comments', ensureAuthenticated, songController.postCommentToSong);
 
+router.delete('/:id/comments/:commentId', ensureAuthenticated, songController.deleteCommentFromSong);
+
 router.put('/:id', ensureAuthenticated, songController.updateSong);
 
 router.delete('/:id', ensureAuthenticated, songController.deleteSong);

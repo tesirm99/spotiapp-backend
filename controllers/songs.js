@@ -1,5 +1,6 @@
 const SongModel = require('../models/song');
 const dotenv = require('dotenv');
+const { v4: uuidv4 } = require('uuid');
 dotenv.config();
 
 module.exports.getAllSongs = async function(req, res) {
@@ -172,7 +173,7 @@ module.exports.postSong = async function(req, res) {
         href: req.body.href,
         popularity: req.body.popularity,
         geolocation: req.body.geolocation || [],
-        comments: []
+        
     });
 
     console.log("song: ", song);
@@ -230,9 +231,7 @@ module.exports.postCommentToSong = async function(req, res) {
         res.status(400).send({ message: 'La valoración no puede ser nula ni indefinida.' });
     }
 
-    console.log('id:   ', req.params.id);
-
-    SongModel.findOne({"_id": req.params.id})
+    SongModel.findById(req.params.id)
     .then((song) => {
         if(song == null || song == undefined) {
             res.status(404).send({ message: 'La canción no existe.' });
@@ -244,7 +243,10 @@ module.exports.postCommentToSong = async function(req, res) {
             author: req.body.author,
             commentText: req.body.commentText,
             stars: req.body.stars,
-            date: req.body.date
+            date: req.body.date,
+            geolocation: req.body.geolocation,
+            author_id: req.body.author_id,
+            _id: uuidv4()
         });
 
         song.save()
@@ -262,9 +264,12 @@ module.exports.postCommentToSong = async function(req, res) {
 }
 
 module.exports.deleteCommentFromSong = async function(req, res) {
-    const song = await SongModel.findById(req.params.id);
-    song.comments.delete(req.params.commentId);
-    await song.save();
+    const song = await SongModel.findOneAndUpdate(
+        { _id: req.params.id },
+        { $pull: { comments: { _id: req.params.commentId } } },
+        { new: true }
+    );
+    
     res.json(song.comments);
 }
 

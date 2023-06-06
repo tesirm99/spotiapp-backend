@@ -13,7 +13,7 @@ const SongSchema = new Schema({
     href: { type: String, required: true },
     popularity: { type: Number, required: true },
     geolocation: { type: [Number], required: false },
-    comments: { type: [cmtSchema], required: false },
+    comments: { type: [ cmtSchema ], required: false },
 });
 
 module.exports = mongoose.model('Song', SongSchema);
