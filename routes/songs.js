@@ -190,6 +190,7 @@ router.get('/searchByDate/:date', songController.searchSongByDate);
  *              $ref: '#/components/schemas/Song'
  */
 router.post('/newsong', ensureAuthenticated, songController.postSong);
+
 /**
  * @swagger
  * /songs/{id}/comments:
@@ -243,7 +244,7 @@ router.get('/:id/comments', songController.getCommentsBySongId);
  *            schema:
  *              $ref: '#/components/schemas/Comment'
  */
-router.post('/:id/comments', ensureAuthenticated, songController.postCommentToSong);
+router.post('/:id/comments', songController.postCommentToSong);
 /**
  * @swagger
  * /songs/{id}/comments/{commentId}:

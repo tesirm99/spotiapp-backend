@@ -130,6 +130,7 @@ module.exports.getCommentsBySongId = async function(req, res) {
 
 module.exports.postSong = async function(req, res) {
 
+    console.log("req.body: ", req.body);
     if(req.body.name == null || req.body.name == undefined) {
         res.status(400).send({ message: 'El nombre no puede ser nulo ni indefinido.' });
     }
