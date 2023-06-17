@@ -4,6 +4,25 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "API Documentation",
+      description: "API Documentation description",
+      contact: {
+        name: "Tesi",
+        email: "tesiroblesmarin@gmail.com"
+      }
+    },
+  },
+  apis: ["./routes/*.js"]
+}
+
+const specs = swaggerJsDoc(swaggerOptions);
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var songsRouter = require('./routes/songs');
@@ -20,6 +39,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 //app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/songs', songsRouter);

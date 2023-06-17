@@ -34,7 +34,7 @@ module.exports.searchSongByName = async function(req, res) {
         res.status(400).send({ message: 'El nombre no puede ser nulo ni indefinido.' });
     }
 
-    SongModel.find({name: req.params.name})
+    SongModel.find({name: { $regex: req.params.name, $options: 'i' } } )
     .then((songs) => {
         if(songs == null || songs == undefined) {
             res.status(404).send({ message: 'La canción no existe.' });
@@ -54,7 +54,7 @@ module.exports.searchSongByArtist = async function(req, res) {
         res.status(400).send({ message: 'El artista no puede ser nulo ni indefinido.' });
     }
 
-    SongModel.find({artist: req.params.artist})
+    SongModel.find({artist: { $regex: req.params.artist, $options: 'i' } })
     .then((songs) => {
         if(songs == null || songs == undefined) {
             res.status(404).send({ message: 'La canción no existe.' });
@@ -171,7 +171,7 @@ module.exports.postSong = async function(req, res) {
         duration: req.body.duration,
         image: req.body.image,
         href: req.body.href,
-        popularity: req.body.popularity,
+        popularity: 0,
         geolocation: req.body.geolocation || [],
         
     });
@@ -190,6 +190,37 @@ module.exports.postSong = async function(req, res) {
 }
 
 module.exports.updateSong = async function(req, res) {
+    // Verificar errores de validación
+
+
+  const { id } = req.params;
+  const { title, artist, album, genre, releaseDate, href, duration, image } = req.body;
+
+  try {
+    // Verificar si la canción existe en la base de datos
+    let song = await SongModel.findById(id);
+    if (!song) {
+      return res.status(404).json({ msg: 'Song not found' });
+    }
+
+    // Actualizar los campos de la canción
+    song.title = title || song.title;
+    song.artist = artist || song.artist;
+    song.album = album || song.album;
+    song.genre = genre || song.genre;
+    song.href = href || song.href;
+    song.duration = duration || song.duration;
+    song.image = image || song.image;
+    song.releaseDate = releaseDate || song.releaseDate;
+
+    // Guardar los cambios en la base de datos
+    await song.save();
+
+    res.json({ msg: 'Canción actualizada exitosamente', song });
+  } catch (error) {
+    console.error('Error al actualizar la canción', error);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
 }
 
 module.exports.deleteSong = async function(req, res) {
@@ -249,6 +280,13 @@ module.exports.postCommentToSong = async function(req, res) {
             _id: uuidv4()
         });
 
+        let pop = 0
+        song.comments.forEach((comment) => {
+            pop += comment.stars;    
+        });
+
+        song.popularity = pop / song.comments.length;
+
         song.save()
         .then((song) => {
             res.status(201).json(song.comments);
@@ -291,7 +329,7 @@ module.exports.fetchSongsFromSpotify = async function(req, res) {
     
     console.log(tokenJson);
 
-    let songs = await fetch('https://api.spotify.com/v1/search?q=' + req.params.searchQ + '&type=track&limit=10&offset=5', {
+    let songs = await fetch('https://api.spotify.com/v1/search?q=' + req.params.searchQ + '&type=track&limit=25&offset=5', {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + tokenJson.access_token,
