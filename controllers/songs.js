@@ -163,13 +163,15 @@ module.exports.postSong = async function(req, res) {
         res.status(400).send({ message: 'La popularidad no puede ser nula ni indefinida.' });
     }
 
+    let duration = parseFloat(req.body.duration).toFixed(2);
+
     const song = new SongModel({
         name: req.body.name,
         artist: req.body.artist,
         album: req.body.album,
         releaseDate: req.body.releaseDate,
         genre: req.body.genre,
-        duration: req.body.duration,
+        duration: duration,
         image: req.body.image,
         href: req.body.href,
         popularity: 0,
