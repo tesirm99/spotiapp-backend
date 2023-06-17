@@ -32,7 +32,7 @@ var app = express();
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(cors({origin: 'http://localhost:8100'}));
+app.use(cors({origin: '*'}));
 app.use(logger('dev'));
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({ extended: false }));

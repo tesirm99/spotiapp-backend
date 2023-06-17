@@ -193,35 +193,34 @@ module.exports.postSong = async function(req, res) {
 module.exports.updateSong = async function(req, res) {
     // Verificar errores de validación
 
+    const { id } = req.params;
+    const { name, artist, album, genre, releaseDate, href, duration, image } = req.body;
 
-  const { id } = req.params;
-  const { title, artist, album, genre, releaseDate, href, duration, image } = req.body;
+    try {
+        // Verificar si la canción existe en la base de datos
+        let song = await SongModel.findById(id);
+        if (!song) {
+            return res.status(404).json({ msg: 'Song not found' });
+        }
 
-  try {
-    // Verificar si la canción existe en la base de datos
-    let song = await SongModel.findById(id);
-    if (!song) {
-      return res.status(404).json({ msg: 'Song not found' });
+        // Actualizar los campos de la canción
+        song.name = name || song.name;
+        song.artist = artist || song.artist;
+        song.album = album || song.album;
+        song.genre = genre || song.genre;
+        song.href = href || song.href;
+        song.duration = duration || song.duration;
+        song.image = image || song.image;
+        song.releaseDate = releaseDate || song.releaseDate;
+
+        // Guardar los cambios en la base de datos
+        await song.save();
+
+        res.json({ msg: 'Song updated successfully', song });
+    } catch (error) {
+        console.error('Error updating the song', error);
+        res.status(500).json({ msg: 'Server error' });
     }
-
-    // Actualizar los campos de la canción
-    song.title = title || song.title;
-    song.artist = artist || song.artist;
-    song.album = album || song.album;
-    song.genre = genre || song.genre;
-    song.href = href || song.href;
-    song.duration = duration || song.duration;
-    song.image = image || song.image;
-    song.releaseDate = releaseDate || song.releaseDate;
-
-    // Guardar los cambios en la base de datos
-    await song.save();
-
-    res.json({ msg: 'Canción actualizada exitosamente', song });
-  } catch (error) {
-    console.error('Error al actualizar la canción', error);
-    res.status(500).json({ msg: 'Error del servidor' });
-  }
 }
 
 module.exports.deleteSong = async function(req, res) {
