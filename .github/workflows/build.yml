@@ -95,6 +95,6 @@ jobs:
         uses: 'google-github-actions/ssh-compute@v0'
         with:
           instance_name: 'spotiapp-vm-tf'
-          zome: 'europe-west2-a'
+          zone: 'europe-west2-a'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
           command: 'sudo docker compose pull && sudo docker compose up -d'
