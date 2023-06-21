@@ -97,4 +97,4 @@ jobs:
           instance_name: 'spotiapp-vm-tf'
           zone: 'europe-west2-a'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-          command: 'sudo docker compose pull && sudo docker compose up -d'
+          command: 'echo Hello world'
