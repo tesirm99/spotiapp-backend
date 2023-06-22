@@ -331,7 +331,7 @@ module.exports.fetchSongsFromSpotify = async function(req, res) {
     
     console.log(tokenJson);
 
-    let songs = await fetch('https://api.spotify.com/v1/search?q=' + req.params.searchQ + '&type=track&limit=25&offset=5', {
+    let songs = await fetch('https://api.spotify.com/v1/search?q=' + req.params.searchQ + '&type=track&limit=50&offset=5', {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + tokenJson.access_token,
